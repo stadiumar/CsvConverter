@@ -49,13 +49,14 @@ class TblProductDataService
 
             $product = new TblProductData();
         
+            // check wether the data is correct for use with a database and format it 
             // shorten string size ot database constraints
             $product->setStrProductCode(substr($item['ProductCode'], 0, 10));    
             $product->setStrProductName(substr($item['ProductName'], 0, 50));
             $product->setStrProductDesc(substr($item['ProductDescription'], 0, 255));
-
+       
             if (
-                array_key_exists('Stock', $item) 
+                array_key_exists('Stock', $item)  
                 && preg_match('/^\d+$/', $item['Stock']) //check if string only contains digits
                 ) {
                 $product->setStock((int)$item['Stock']);

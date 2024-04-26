@@ -18,13 +18,14 @@ class ParseCsvService
         if (!file_exists($filePath)) return $lines;
 
         $fileStream  = fopen($filePath, 'r+');
-        
+      
         while (($data = fgetcsv($fileStream)) != false) { 
             if (is_null($data[0])) continue; // skip empty lines
 
             foreach ($data as $key => $item) {
-                $item = Encoding::toUTF8($item);
-
+                $item = Encoding::toUTF8($item); // convert to UTF-8, if not already UTF-8
+        
+                // i dont want to reject the whole file if only one symbol is invali, so i'd rather make it empty if value is not vonvertable
                 if (!mb_check_encoding($item, 'UTF-8')) $item = '';
 
                 $data[$key] = trim($item);
@@ -35,7 +36,7 @@ class ParseCsvService
     
         return $lines;
     }
-
+ 
     /**
      * Retrieves full data based on given lines and field names.
      *
