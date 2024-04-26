@@ -5,6 +5,8 @@ use \ForceUTF8\Encoding;
 
 class ParseCsvService 
 {
+    const MEMORY_UNITS =  ['B', 'KB', 'MB', 'GB', 'TB'];
+
     /**
      * Retrieves an array of lines from a given file path.
      *
@@ -106,13 +108,11 @@ class ParseCsvService
      */
     public function getConvertedFileSizeFormat(int $bytes, int $precision = 2): array
     {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB']; 
-   
         $bytes = max($bytes, 0); 
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
-        $pow = min($pow, count($units) - 1); 
+        $pow = min($pow, count(self::MEMORY_UNITS) - 1); 
        
-        return ['value' => round($bytes, $precision), 'mesure' => $units[$pow]]; 
+        return ['value' => round($bytes, $precision), 'mesure' => self::MEMORY_UNITS[$pow]]; 
     }
 
     /**
