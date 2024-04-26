@@ -4,7 +4,6 @@ namespace App\Services;
 use App\Entity\TblProductData;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTime;
-use Doctrine\Persistence\ManagerRegistry;
 
 class TblProductDataService
 {
@@ -16,16 +15,12 @@ class TblProductDataService
 
     private $currencyService;
 
-    private $registry;
-
     public function __construct(
         EntityManagerInterface $entityManager,
         CurrencyService $currencyService,
-        ManagerRegistry $registry
     ) {
         $this->entityManager = $entityManager;
         $this->currencyService = $currencyService;
-        $this->registry = $registry;
     }
 
     /**
@@ -104,7 +99,6 @@ class TblProductDataService
 
             } catch (\Exception $e) {
                 $this->entityManager->rollback();
-                // $this->registry->resetManager();
 
                 $this->entityManager->flush();
                 $this->entityManager->commit();

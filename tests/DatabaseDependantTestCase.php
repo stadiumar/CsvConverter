@@ -3,16 +3,12 @@
 namespace App\Tests;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class DatabaseDependantTestCase extends KernelTestCase
 {
     /** @var EntityManagerInterface */
     protected $entityManager;
-
-    /** @var ManagerRegistry */
-    protected $entityManagerRegistry;
 
     protected function setUp(): void
     {

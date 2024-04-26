@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use App\Services\ParseCsvService;
 use App\Services\TblProductDataService;
 
-class TestCommand extends Command
+class ImportCsvToDatabaseCommand extends Command
 {
     private $parseCsvService;
 
@@ -28,7 +28,7 @@ class TestCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('test-command')
+            ->setName('import-csv-to-database-command') //test command
             ->addArgument('newFilePath', null, InputOption::VALUE_REQUIRED)
             ->addArgument('executionMode', null, InputOption::VALUE_OPTIONAL, 'dev')
             ;

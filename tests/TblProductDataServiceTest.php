@@ -7,7 +7,6 @@ use App\Entity\TblProductData;
 use App\Tests\DatabaseDependantTestCase;
 use App\Services\TblProductDataService;
 use App\Services\CurrencyService;
-use DateTime;
 
 class TblProductDataServiceTest extends DatabaseDependantTestCase
 {
