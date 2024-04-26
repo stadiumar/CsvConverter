@@ -41,31 +41,29 @@ class TblProductDataService
         $skippedRecords = [];
         $status = 'success';
 
-        // $this->entityManager->beginTransaction();
-        // not to save product if one of reqired fields is missing ?
-        // move transaction to the single product creation because if one of the required fields is missing the whole butch will be rejected
-
         foreach($data as $item) {
+            // not to save product if one of reqired fields is missing
             foreach(self::REQUIERED_FIELDS as $requiredField) {
                 if (!array_key_exists($requiredField, $item)) continue 2;
             }
 
             $product = new TblProductData();
-            // i would make function to substr field to acceptable sized to database
+        
+            // shorten string size ot database constraints
             $product->setStrProductCode(substr($item['ProductCode'], 0, 10));    
             $product->setStrProductName(substr($item['ProductName'], 0, 50));
             $product->setStrProductDesc(substr($item['ProductDescription'], 0, 255));
 
             if (
                 array_key_exists('Stock', $item) 
-                && preg_match('/^\d+$/', $item['Stock'])
+                && preg_match('/^\d+$/', $item['Stock']) //check if string only contains digits
                 ) {
                 $product->setStock((int)$item['Stock']);
             }
 
             if (
                 array_key_exists('CostInGbp', $item)
-                && is_numeric($item['CostInGbp'])
+                && is_numeric($item['CostInGbp']) //accept strings, which only contain int or float
                 ) {
                 $product->setCostGbp((float)$item['CostInGbp']);
             }
@@ -81,7 +79,8 @@ class TblProductDataService
                 $costInUSD = $this->currencyService
                                 ->getConvertedAmmount($costGbp, $this->currencyService::GBP, $this->currencyService::USD);
     
-                if ($costInUSD && ($costInUSD > 1000 || ($costInUSD < 5 && (int)$product->getStock() < 10))) {
+                // don't save product if cost is over 1000$ of under 5$ and stock is under 10
+                if ($costInUSD && ($costInUSD > 1000 || ($costInUSD < 5 && $product->getStock() < 10))) {
                     $skippedRecords[] = $product->getStrProductCode() . ' - ' . $product->getStrProductName();
 
                     continue;

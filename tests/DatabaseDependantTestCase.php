@@ -18,7 +18,6 @@ class DatabaseDependantTestCase extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-
     protected function tearDown(): void
     {
         parent::tearDown();

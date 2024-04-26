@@ -43,7 +43,7 @@ class ParseCsvService
      * @param array $field_names The names of the fields to extract.
      * @return array The full data extracted based on the given lines and field names.
      */
-    public static function getFullData(array $lines, array $field_names): array
+    public static function getFullData(array $lines, array $fieldNames): array
     {
         $data = [];
 
@@ -53,8 +53,9 @@ class ParseCsvService
             $fields = $line;
             $res = [];
 
-            foreach ($field_names as $key => $header) {
-                $newKey = self::camelize(strtolower(trim($header)));
+            foreach ($fieldNames as $key => $header) {
+                //convertion of values to camelCase in not nessesary but makes code more consistent
+                $newKey = self::camelize(strtolower(trim($header))); 
 
                 if (!array_key_exists($key, $fields)) continue;
 
@@ -68,7 +69,7 @@ class ParseCsvService
     }
 
     /**
-     * Eliminates empty strings from the target file and saves the result to a temporary file.
+     * Eliminates empty strings from the target file, replaces all delimeters to '\n', and saves the result to a temporary file.
      *
      * @param string $targetFilePath The path to the target file.
      * @param string $tempFilePath The path to the temporary file.
@@ -117,7 +118,7 @@ class ParseCsvService
      * Checks if the given file size is too big.
      *
      * @param int $bytes The size of the file in bytes.
-     * @return bool Returns true if the file size is too big, false otherwise.
+     * @return bool Returns true if the file size is over 3 GB, false otherwise.
      */
     public function fileIsTooBig(int $bytes): bool
     {

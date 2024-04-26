@@ -28,7 +28,7 @@ class ImportCsvToDatabaseCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('import-csv-to-database-command') //test command
+            ->setName('import-csv-to-database-command')
             ->addArgument('newFilePath', null, InputOption::VALUE_REQUIRED)
             ->addArgument('executionMode', null, InputOption::VALUE_OPTIONAL, 'dev')
             ;
@@ -45,6 +45,7 @@ class ImportCsvToDatabaseCommand extends Command
             return 0;
         }
    
+        // set file size limit for command to 3 GB
         if ($this->parseCsvService->fileIsTooBig(filesize($targetFilePath))) {
             $output->writeln('File is too big. Please use smaller file.');
             
@@ -53,9 +54,9 @@ class ImportCsvToDatabaseCommand extends Command
     
         $tempFilePath = './temp/temp.csv';
         
-        // if there is any line termination problem, it just considered as null value
-        // solution of potential problem with empty lines
+        // solution of potential problem with empty lines and wrong delimiters
         $this->parseCsvService->eliminateEmptyStrings($targetFilePath, $tempFilePath); 
+        // make temporary file with formatted content as target
         $targetFilePath = $tempFilePath;
 
         if (
@@ -67,14 +68,19 @@ class ImportCsvToDatabaseCommand extends Command
             return 0;
         }
 
+        // get lines as arrays from file
         $lines = $this->parseCsvService->getLines($targetFilePath);
         
+        // get the first line as field names and remove it from the array
         $fieldNames = array_shift($lines);
 
-        $data = $this->parseCsvService->getFullData($lines, $fieldNames);
+        // get mulitydemencional array of fields and values from lines 
+        $fieldsWithValues = $this->parseCsvService->getFullData($lines, $fieldNames);
 
-        $importResult = $this->productService->massImportProduct($data, $input->getArgument('executionMode'));
+        // process fields and values to create product objects and save to database
+        $importResult = $this->productService->massImportProduct($fieldsWithValues, $input->getArgument('executionMode'));
 
+        // if import is not successful, print error message
         if ($importResult['status'] != 'success') {
             $output->writeln($importResult['status']);
 
@@ -89,12 +95,13 @@ class ImportCsvToDatabaseCommand extends Command
             $output->writeln($skippedItem);
         }
 
-        $output->writeln("\nItems processed: ". count($data));
+        $output->writeln("\nItems processed: ". count($fieldsWithValues));
 
         if ($input->getArgument('executionMode') != 'test') {
-            $output->writeln('Items successfully imported: ' . count($data) - count($skipped));
+            $output->writeln('Items successfully imported: ' . count($fieldsWithValues) - count($skipped));
         }
         
+        // delete temporary file
         unlink($tempFilePath);
 
         return 0;
