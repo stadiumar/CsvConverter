@@ -55,6 +55,7 @@ class ImportCsvToDatabaseCommand extends Command
         $tempFilePath = './temp/temp.csv';
         
         // solution of potential problem with empty lines and wrong delimiters
+        // we need to do it before check of extension, because empty line in the begging will make text/plain from csv
         $this->parseCsvService->eliminateEmptyStrings($targetFilePath, $tempFilePath); 
         // make temporary file with formatted content as target
         $targetFilePath = $tempFilePath;
@@ -68,6 +69,7 @@ class ImportCsvToDatabaseCommand extends Command
             return 0;
         }
 
+        // In order to check whether the data is correctly formatted in CSV i check every item and 
         // get lines as arrays from file
         $lines = $this->parseCsvService->getLines($targetFilePath);
         

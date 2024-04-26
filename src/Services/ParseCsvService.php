@@ -25,7 +25,7 @@ class ParseCsvService
             foreach ($data as $key => $item) {
                 $item = Encoding::toUTF8($item); // convert to UTF-8, if not already UTF-8
         
-                // i dont want to reject the whole file if only one symbol is invali, so i'd rather make it empty if value is not vonvertable
+                // i dont want to reject the whole file if only one symbol is invali, so i'd rather make it empty if value is not convertable
                 if (!mb_check_encoding($item, 'UTF-8')) $item = '';
 
                 $data[$key] = trim($item);
@@ -52,7 +52,7 @@ class ParseCsvService
             if (!$line) continue; // skip empty array just in case, but technically in scv even if line empty array has at least one element
 
             $fields = $line;
-            $res = [];
+            $record = [];
 
             foreach ($fieldNames as $key => $header) {
                 //convertion of values to camelCase in not nessesary but makes code more consistent
@@ -60,10 +60,10 @@ class ParseCsvService
 
                 if (!array_key_exists($key, $fields)) continue;
 
-                $res[$newKey] = $fields[$key];        
+                $record[$newKey] = $fields[$key];        
             }
 
-            $data[] = $res;
+            $data[] = $record;
         }
 
         return $data;
